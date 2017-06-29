@@ -1,0 +1,17 @@
+web:
+  build: ./app
+  ports:
+    - "5000:5000"
+  # don't change the mount destination (source:destination)
+  # TODO delete the nltk_data mount (should be within the machine)
+  volumes:
+    - ./app:/app
+    - /Users/valentinarho/Downloads/om-integration/data:/data
+    - /Users/valentinarho/Downloads/om-integration/logs:/logs
+    - /Users/valentinarho/Downloads/om-integration/nltk_data:/usr/share/nltk_data 
+  links:
+    - db
+db:
+  image: mongo:3
+  ports:
+    - "27017:27017/tcp"

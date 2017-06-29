@@ -1,0 +1,8 @@
+flask
+pymongo
+flask-restful
+gensim
+numpy
+wikipedia
+nltk
+sklearn
