@@ -14,19 +14,7 @@ Following a table describing the available APIs:
 | Endpoint | Http request | Description | Parameters | 
 | --- | --- | --- | --- |
 | models/ | GET | Lists all models | - |
-| models/ | PUT | Creates a new model w.r.t. the provided parameters | * model_id: str, the id of the model to be created; 
-* number_of_topics: int, the number of topics to extract; 
-* language: 'en', the language of the documents; 
-* use_lemmer: bool, true to perform lemmatisation, false to perform stemming; 
-* min_df: int, the minimum number of documents that should contain a term to consider it;
-* max_df: float, the maximum percentage of documents that should contain a term to consider it as valid;
-* chunksize: int, the size of a chunk in LDA;
-* num_passes: int, the minimum number of passes through the dataset during learning with LDA; 
-* waiting_seconds: int, the number of seconds to wait before starting the learning; 
-* data_filename: str, the filename in the 'data' folder that contains data, the file should contain a json dump of documents each one with doc_id and doc_content keys; 
-* data: json_dictionary, a dictionary of documents, containing document_id as key and document_content as value;
-* assign_topics: bool, true to assign topics to the newly created model and to save on db, false to ignore assignments for the learning documents;
-|  
+| models/ | PUT | Creates a new model w.r.t. the provided parameters | * model_id: str, the id of the model to be created; * number_of_topics: int, the number of topics to extract; * language: 'en', the language of the documents; * use_lemmer: bool, true to perform lemmatisation, false to perform stemming; * min_df: int, the minimum number of documents that should contain a term to consider it; * max_df: float, the maximum percentage of documents that should contain a term to consider it as valid; * chunksize: int, the size of a chunk in LDA; * num_passes: int, the minimum number of passes through the dataset during learning with LDA;  * waiting_seconds: int, the number of seconds to wait before starting the learning; * data_filename: str, the filename in the 'data' folder that contains data, the file should contain a json dump of documents each one with doc_id and doc_content keys; * data: json_dictionary, a dictionary of documents, containing document_id as key and document_content as value; * assign_topics: bool, true to assign topics to the newly created model and to save on db, false to ignore assignments for the learning documents; |  
 | models/\<model-id\> | GET | Shows detailed information about model with id \<model-id\> | | 
 | models/\<model-id\>/documents/ | GET | Lists all documents assigned to the model with id \<model-id\> | - |
 | models/\<model-id\>/documents/ | DELETE | Delete the model with the specified id, stops the computation if scheduled or performed | - |
@@ -71,6 +59,14 @@ During model computation it is possible to load documents in two ways:
 
 #### Useful commands 
 
+To build all containers 
+
+	docker-compose build
+
+To run all containers 
+
+	docker-compose up
+
+To exec a command within a running container, e.g. load fake data into the mongo database
+
     docker-compose exec web python db/load_fake_data.py
-    
-    docker-compose exec web python tests/models_api.py
