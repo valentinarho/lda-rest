@@ -10,7 +10,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 import config
 from db import db_utils
 from model.lda_model import LdaModelHelper
-from model.lemmatiser import LemNormalize
+from model.lemmatiser import LemNormalize, LemNormalizeIt
 from scripts import scheduler
 import json
 from scipy import spatial
@@ -99,7 +99,6 @@ def compute_model(model_id, n_topics, language='en', use_lemmer=True, min_df=2, 
     model = db_utils.get_model(model_id)
 
     if model is not None:
-        # TODO check the appropriate code
         # model id already existing
         return 500, None
     else:
@@ -167,11 +166,17 @@ def get_stopwords(language):
     :param language: 'it' or 'en'
     :return: a string or a list of stopwords
     """
+    stopwords_list = []
     if language == 'it':
-        # todo get ita stopwords
-        pass
+        with open(config.italian_stopwords_filepath, 'r') as file:
+            stopwords_list = file.readlines()
+
+        stopwords_list = [s.strip() for s in stopwords_list]
+        return stopwords_list
 
     return stopwords.words('english')
+
+
 
 
 def compute_tf(data, stopwords_list, language, use_lemmer=True, min_df=2, max_df=0.8):
@@ -189,8 +194,7 @@ def compute_tf(data, stopwords_list, language, use_lemmer=True, min_df=2, max_df
 
     if use_lemmer:
         if language == 'it':
-            # TODO implement lemming with morphit
-            pass
+            lemmer_tokenizer = LemNormalizeIt
         else:
             lemmer_tokenizer = LemNormalize
 

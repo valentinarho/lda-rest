@@ -98,7 +98,7 @@ class LdaModelHelper:
         if self.training_corpus is None:
             self.compute_corpus(texts, parameters='training')
 
-        if len(self.training_corpus) == 0:
+        if self.training_corpus is None or len(self.training_corpus) == 0:
             raise Exception('The training corpus is empty. Tune model computation parameters.')
 
         start = time.time()
@@ -149,7 +149,7 @@ class LdaModelHelper:
         if parameters == 'training':
             tf_matrix, tf_matrix_features_names, tf_matrix_docs_ids = self.compute_tf_matrix(texts, parameters)
 
-            if len(tf_matrix_features_names) == 0:
+            if tf_matrix_features_names is None or len(tf_matrix_features_names) == 0:
                 return []
 
             self.training_corpus = matutils.Sparse2Corpus(tf_matrix, documents_columns=False)
@@ -407,10 +407,12 @@ class LdaModelHelper:
 
         topics = {}
 
-        for t in self.lda_model.show_topics(num_topics=self.training_number_of_topics_to_extract, num_words=40,
+        for t in self.lda_model.show_topics(num_topics=self.training_number_of_topics_to_extract,
+                                            num_words=config.max_number_of_words_per_topic,
                                             formatted=False):
             topic_id = t[0]
-            topic_distr = self.get_word_frequencies(self.lda_model.show_topic(topic_id))
+            topic_distr = self.get_word_frequencies(self.lda_model.show_topic(topic_id,
+                                                                              config.max_number_of_words_per_topic))
 
             topics[topic_id] = topic_distr
 

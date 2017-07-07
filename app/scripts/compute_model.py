@@ -27,13 +27,17 @@ class ComputeModelProcess(Process):
         logging.error(str(args))
         self.model_identifier = model_identifier
 
-        # TODO non funziona perchè i sottoprocessi non possono chiamare questo metodo
+        # TODO questo comando non funziona perchè i sottoprocessi non possono chiamare questo metodo
         # signal.signal(signal.SIGUSR1, terminate)
 
     def run(self):
         sleep(self.seconds_to_wait)
         lda_utils.update_model_status(self.model_identifier, LdaModelHelper.status_computing, {'process_id': self.pid})
-        compute_and_save_model(self.model_identifier, *self.function_args)
+        try:
+            compute_and_save_model(self.model_identifier, *self.function_args)
+        except Exception:
+            lda_utils.update_model_status(self.model_identifier, LdaModelHelper.status_error, {'process_id': None})
+
 
     def get_pid(self):
         return self.pid

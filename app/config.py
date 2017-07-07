@@ -14,7 +14,13 @@ current_model_id = 'unique_model'
 
 data_path = '/data'
 
-app_log_filepath = '/logs/om_integrtion_app_log.log'
+
+resource_path = os.path.join(os.path.split(__file__)[0], "resources")
+
+italian_stopwords_filepath = resource_path + '/stopwords_it.txt'
+italian_lemma_filepath = resource_path + '/morph-it_048_UTF8.txt'
+
+app_log_filepath = '/logs/om_integration_app_log.log'
 scripts_log_filepath = '/logs/lda_scripts_log.log'
 
 defaults = {
@@ -32,7 +38,7 @@ defaults = {
 }
 
 # LDA
-max_number_of_words_per_topic = 50
+max_number_of_words_per_topic = 30
 
 exposed_fields = {
     'models': ['version', 'version_description', 'created',
