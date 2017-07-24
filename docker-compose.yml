@@ -2,16 +2,18 @@ web:
   build: ./app
   ports:
     - "5000:5000"
-  # don't change the mount destination (source:destination)
-  # TODO delete the nltk_data mount (should be within the machine)
+  # don't change the mount _destination_ of modules (syntax: "source:destination")
   volumes:
-    - ./app:/app
+    # - ./app:/app # only on dev
+    # the shared data folder
     - /Users/valentinarho/Downloads/om-integration/data:/data
+    # the logs folder
     - /Users/valentinarho/Downloads/om-integration/logs:/logs
-    - /Users/valentinarho/Downloads/om-integration/nltk_data:/usr/share/nltk_data 
+    # - /Users/valentinarho/Downloads/om-integration/nltk_data:/usr/share/nltk_data
   links:
     - db
 db:
   image: mongo:3
-  ports:
-    - "27017:27017/tcp"
+  # uncomment to map the mongodb port to the external machine port
+  #ports:
+  #  - "27017:27017/tcp"
