@@ -53,6 +53,7 @@ def LemNormalizeIt(text):
     # tokenize the transformed string
     tokenized = nltk.word_tokenize(transformed)
 
+    # apply lemming with morph it
     morph_it = load_morph_it()
     tokenized = [morph_it.get(w, w) for w in tokenized]
 
