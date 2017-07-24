@@ -23,7 +23,7 @@ class LdaModelHelper:
     status_scheduled = 'scheduled'
     status_computing = 'computing'
     status_completed = 'completed'
-    status_error = 'interrupted_with_error'
+    status_error = 'killed'
 
     def __init__(self, training_number_of_topics_to_extract, language, training_use_lemmer=True, training_min_df=2,
                  training_max_df=0.8, chunksize=2000, passes=2):
