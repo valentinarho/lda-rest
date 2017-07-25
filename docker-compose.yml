@@ -14,6 +14,9 @@ web:
     - db
 db:
   image: mongo:3
+  volumes: 
+    - /Users/valentinarho/Downloads/om-integration/db_data/:/data/db
+    - /Users/valentinarho/Downloads/om-integration/db_config/:/data/configdb
   # uncomment to map the mongodb port to the external machine port
   #ports:
-  #  - "27017:27017/tcp"
+  #   - "27017:27017/tcp"
