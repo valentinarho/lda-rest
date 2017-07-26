@@ -1,4 +1,8 @@
-## OntoMap Integration
+# Latent Dirichlet Allocation REST Web Service
+
+This library provides a Python REST Web Service to access a simple pipeline to create and query LDA Models. Created models information are stored in a Mongo database and models file are stored on a shared folder in the host filesystem.
+
+## Project architecture
 
 The system is composed by two Docker containers: 
 
