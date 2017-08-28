@@ -197,14 +197,13 @@ class LdaModelHelper:
     def compute_corpus_single_query(self, text):
         """
         Compute the corpus in gensim format for a single query (this implies using special parameters for preprocessing)
-        :param parameters:
-        :param texts:
+        :param text:
         :return:
         """
 
         if self.lda_model is None:
             logging.error('The model has not been computed or loaded yet.')
-            return None
+            return None, None
         else:
             # Note: words not included in the model are ignored
             stopwords_list = lda_utils.get_stopwords(self.language)
@@ -212,7 +211,7 @@ class LdaModelHelper:
                                                                        True, 1, 1.0)
 
             if len(tf_matrix_features_names) == 0:
-                return []
+                return [], tf_matrix_features_names
 
             corpus = [None] * tf_matrix.shape[0]
 

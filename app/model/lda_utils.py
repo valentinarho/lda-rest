@@ -317,12 +317,21 @@ def get_similar_documents(model_id, doc_id):
 
 
 def get_similar_documents_for_query(model_id, text):
+    """
+    Return documents similar to the query or an empty set if an error occurs or the query has no words after preprocessing
+    :param model_id:
+    :param text:
+    :return:
+    """
     model = db_utils.get_model(model_id)
     topics_assignment = assign_topics_for_query(model_id, text)
 
-    topics_vector = transform_topics_assignment_from_lda_to_vector(model['number_of_topics'], topics_assignment[0])
-    print(topics_vector)
-    return get_similar_documents_by_vector(model_id, topics_vector)
+    if len(topics_assignment) != 0:
+        topics_vector = transform_topics_assignment_from_lda_to_vector(model['number_of_topics'], topics_assignment[0])
+        # print(topics_vector)
+        return get_similar_documents_by_vector(model_id, topics_vector)
+    else:
+        return []
 
 
 def transform_topics_assignment_from_db_to_vector(n_topics, topics_assignment):
@@ -370,10 +379,11 @@ def get_similar_documents_by_vector(model_id, source_topics_vector):
     return sorted(result_docs, key=lambda x: x['similarity_score'], reverse=True)
 
 
-
 def assign_topics_for_query(model_id, text, threshold=0.0):
     """
-    retrieve topics assignment for the specified query in the model
+    Retrieve topics assignment for the specified query in the model.
+    Return None if the specified model is not found.
+    Return an empty topic assignment if an error occurs during computation or if the query has no relevant word after preprocessing.
     :param model_id:
     :param text:
     :return:
@@ -386,6 +396,9 @@ def assign_topics_for_query(model_id, text, threshold=0.0):
     model = LdaModelHelper(model_info['number_of_topics'], model_info['language'])
     model.load_model_from_file(os.path.join(config.data_path, model_info['files_prefix']))
 
-    topic_assignment = model.compute_topic_assignment_for_query(text)
+    try:
+        topic_assignment = model.compute_topic_assignment_for_query(text)
+    except:
+        return [];
 
     return topic_assignment
