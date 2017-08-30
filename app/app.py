@@ -53,7 +53,7 @@ if __name__ == "__main__":
     api.add_resource(Model, api_utils.get_uri('model'), methods=['GET', 'PATCH', 'DELETE'],
                      strict_slashes=False)
 
-    api.add_resource(Topics, api_utils.get_uri('topics'), methods=['GET'], strict_slashes=False)
+    api.add_resource(Topics, api_utils.get_uri('topics'), methods=['GET', 'SEARCH'], strict_slashes=False)
     api.add_resource(Topic, api_utils.get_uri('topic'),
                      methods=['GET', 'PATCH'], strict_slashes=False)
 
