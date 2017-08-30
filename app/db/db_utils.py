@@ -1,10 +1,8 @@
-import logging
-
 import time
-from pymongo import MongoClient
-from pymongo.collection import Collection
 
 import config
+from pymongo import MongoClient
+from pymongo.collection import Collection
 
 mongo_client = None
 
@@ -96,7 +94,8 @@ def get_all_topics(model_id):
 
     topics = []
     for i, t in enumerate(result['topics']):
-        t['words_distribution'] = [{'w': k, 'w_weight': v} for k,v in t['words_distribution'].items()]
+        t['words_distribution'] = sorted([{'w': k, 'w_weight': v} for k, v in t['words_distribution'].items()],
+                                         key=lambda t: t['w_weight'], reverse=True)
         topics.append(t)
 
     return topics
@@ -115,10 +114,31 @@ def get_topic(model_id, topic_id):
     result = collection.find_one({'model_id': model_id})
     if result['topics'] is not None and len(result['topics']) != 0:
         topic = list(filter(lambda t: t['topic_id'] == topic_id, result['topics']))[0]
-        topic['words_distribution'] = sorted([{'w': k, 'w_weight': v} for k, v in topic['words_distribution'].items()], key=lambda t:t['w_weight'], reverse=True)
+        topic['words_distribution'] = sorted([{'w': k, 'w_weight': v} for k, v in topic['words_distribution'].items()],
+                                             key=lambda t: t['w_weight'], reverse=True)
         return topic
 
     return None;
+
+
+def update_topic(model_id, topic_id, topic_label=None, topic_description=None):
+    if topic_label.strip() != "" or topic_description.strip() != "":
+        models_collection = get_collection(config.models_collection_name)
+        model = models_collection.find_one({'model_id': model_id})
+
+        if 'topics' in model and len(model['topics']) != 0:
+            if len(model['topics']) > topic_id:
+                if topic_label is not None:
+                    model['topics'][topic_id]['topic_label'] = topic_label
+                if topic_description is not None:
+                    model['topics'][topic_id]['topic_description'] = topic_description
+
+                models_collection.update_one({'model_id': model_id}, {'$set': {'topics': model['topics']}})
+                return model['topics'][topic_id]
+            else:
+                return None
+    else:
+        return None
 
 
 def get_all_documents(model_id=None):
@@ -223,7 +243,7 @@ def get_assigned_topics(model_id, document_id, topics_threshold=0.0):
 
     if topics is not None:
         result = [{'topic_id': a['topic_id'], 'topic_weight': a['topic_weight']}
-                                     for a in topics['assigned_topics']
-                                     if a['topic_weight'] >= topics_threshold]
+                  for a in topics['assigned_topics']
+                  if a['topic_weight'] >= topics_threshold]
 
     return result

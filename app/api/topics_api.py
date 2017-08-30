@@ -81,6 +81,15 @@ class Topic(Resource):
                             help='The human readable description of the topic.')
         args = parser.parse_args()
 
+        if args['label'] is not None or args['description'] is not None:
+            topic = db_utils.update_topic(model_id, int(topic_id), args['label'], args['description'])
+            if topic is None:
+                return api_utils.prepare_error_response(500, 'Error during the update, check the provided topic id.')
+            else:
+                return api_utils.prepare_success_response(200, 'Topic updated.', data=marshal(topic, api_utils.topic_fields))
+        else:
+            return api_utils.prepare_error_response(500, 'Provide the label or the description to set.')
+
         # TODO controllare che ci sia almeno uno dei due argomenti e implementare il metodo
 
         return api_utils.prepare_error_response(500, "Not yet implemented.")
