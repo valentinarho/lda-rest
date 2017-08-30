@@ -193,9 +193,9 @@ def get_document(model_id, document_id, topics_threshold):
 
     result = {k: v for k, v in doc.items()}
     if topics is not None:
-        result['assigned_topics'] = [{'topic_id': a['topic_id'], 'topic_weight': a['topic_weight']}
+        result['assigned_topics'] = sorted([{'topic_id': a['topic_id'], 'topic_weight': a['topic_weight']}
                                      for a in topics['assigned_topics']
-                                     if a['topic_weight'] >= topics_threshold]
+                                     if a['topic_weight'] >= topics_threshold], reverse=True, key=lambda t:t['topic_weight'])
         result['model_id'] = model_id
 
     return result
@@ -242,8 +242,8 @@ def get_assigned_topics(model_id, document_id, topics_threshold=0.0):
     topics = topics_collection.find_one({'model_id': model_id, 'document_id': str(document_id)})
 
     if topics is not None:
-        result = [{'topic_id': a['topic_id'], 'topic_weight': a['topic_weight']}
+        result = sorted([{'topic_id': a['topic_id'], 'topic_weight': a['topic_weight']}
                   for a in topics['assigned_topics']
-                  if a['topic_weight'] >= topics_threshold]
+                  if a['topic_weight'] >= topics_threshold], reverse=True, key=lambda t:t['topic_weight'])
 
     return result

@@ -55,7 +55,7 @@ class Topics(Resource):
                 response_code = 500
             else:
                 list_of_da = lda_utils.convert_topic_assignment_to_dictionary(topics_assignment)
-                data['assigned_topics'] = list_of_da[0]['assigned_topics']
+                data['assigned_topics'] = sorted(list_of_da[0]['assigned_topics'], reverse=True, key=lambda d:d['topic_weight'])
                 response_code = 200
                 response = "Topics extracted."
 
