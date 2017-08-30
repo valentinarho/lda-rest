@@ -24,7 +24,7 @@ class ComputeModelProcess(Process):
 
         self.seconds_to_wait = seconds_to_wait
         self.function_args = args
-        logging.error(str(args))
+        logging.info(str(args))
         self.model_identifier = model_identifier
 
         # TODO questo comando non funziona perchè i sottoprocessi non possono chiamare questo metodo
@@ -35,7 +35,9 @@ class ComputeModelProcess(Process):
         lda_utils.update_model_status(self.model_identifier, LdaModelHelper.status_computing, {'process_id': self.pid})
         try:
             compute_and_save_model(self.model_identifier, *self.function_args)
-        except Exception:
+        except Exception as e:
+            logging.exception("Error during the model computation.")
+            logging.error(e.format_exc())
             lda_utils.update_model_status(self.model_identifier, LdaModelHelper.status_error, {'process_id': None})
 
 
@@ -68,7 +70,7 @@ def compute_and_save_model(model_id, n_topics, language, use_lemmer, min_df, max
     :param data: dictionary of key:value where key is document id and value is document content
     :param assign_topics:
     """
-    # setup_logging()
+    setup_logging()
 
     if data_filename is not None:
         # if documents_filename is set
