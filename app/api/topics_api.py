@@ -46,7 +46,6 @@ class Topics(Resource):
             response_code = 200
             marshalled = marshal(data, api_utils.topics_fields)
 
-
         if response_code == 200:
             return api_utils.prepare_success_response(response_code, response, marshalled)
         else:
@@ -62,10 +61,10 @@ class Topic(Resource):
         :return:
         """
         data = db_utils.get_topic(model_id, int(topic_id))
-        data = api_utils.filter_only_exposed(data, config.exposed_fields['topics'])
+        marshalled = marshal(data, api_utils.topic_fields)
         response = "Topic retrieved."
 
-        return api_utils.prepare_success_response(200, response, marshal(data, api_utils.topic_fields))
+        return api_utils.prepare_success_response(200, response, marshalled)
 
     def patch(self, model_id, topic_id):
         """

@@ -113,9 +113,12 @@ def get_topic(model_id, topic_id):
     collection = get_collection(config.models_collection_name)
 
     result = collection.find_one({'model_id': model_id})
-    topic = list(filter(lambda t: t['topic_id'] == topic_id, result['topics']))[0]
+    if result['topics'] is not None and len(result['topics']) != 0:
+        topic = list(filter(lambda t: t['topic_id'] == topic_id, result['topics']))[0]
+        topic['words_distribution'] = sorted([{'w': k, 'w_weight': v} for k, v in topic['words_distribution'].items()], key=lambda t:t['w_weight'], reverse=True)
+        return topic
 
-    return topic
+    return None;
 
 
 def get_all_documents(model_id=None):
