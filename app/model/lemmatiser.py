@@ -55,6 +55,6 @@ def LemNormalizeIt(text):
 
     # apply lemming with morph it
     morph_it = load_morph_it()
-    tokenized = [morph_it.get(w, w) for w in tokenized]
+    tokenized = [morph_it.get(w, w) for w in tokenized if len(w) > 3]
 
     return tokenized
