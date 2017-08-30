@@ -16,35 +16,15 @@ class Topics(Resource):
         :return:
         """
         parser = reqparse.RequestParser(bundle_errors=True)
-        parser.add_argument('threshold', default=0.0, required=False, type=float,
-                            help='The minimum probability that a topic should have to be returned as related to the query string.')
-        parser.add_argument('text', default=None, required=False, type=str,
-                            help='The query to assign topics to.')
-
         args = parser.parse_args()
 
-        if args['text'] is not None:
-            data = {'model_id': model_id, 'threshold': args['threshold'], 'textual_query': args['text']}
+        # else restituisci la lista di topics
+        data = {'topics': db_utils.get_all_topics(model_id), 'model_id': model_id}
 
-            topics_assignment = lda_utils.assign_topics_for_query(model_id, args['text'], args['threshold'])
-            if topics_assignment is None:
-                response = "Error during topic extraction. Check logs."
-                response_code = 500
-            else:
-                list_of_da = lda_utils.convert_topic_assignment_to_dictionary(topics_assignment)
-                data['assigned_topics'] = list_of_da[0]['assigned_topics']
-                response_code = 200
-                response = "Topics extracted."
-
-            marshalled = marshal(data, api_utils.textual_query_fields)
-        else:
-            # else restituisci la lista di topics
-            data = {'topics': db_utils.get_all_topics(model_id), 'model_id': model_id}
-
-            # data = api_utils.filter_only_exposed(data, config.exposed_fields['topics'])
-            response = "Topics retrieved."
-            response_code = 200
-            marshalled = marshal(data, api_utils.topics_fields)
+        # data = api_utils.filter_only_exposed(data, config.exposed_fields['topics'])
+        response = "Topics retrieved."
+        response_code = 200
+        marshalled = marshal(data, api_utils.topics_fields)
 
         if response_code == 200:
             return api_utils.prepare_success_response(response_code, response, marshalled)
