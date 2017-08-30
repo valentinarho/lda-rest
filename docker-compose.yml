@@ -17,6 +17,6 @@ db:
   volumes: 
     - /Users/valentinarho/Downloads/om-integration/db_data/:/data/db
     - /Users/valentinarho/Downloads/om-integration/db_config/:/data/configdb
-  # uncomment to map the mongodb port to the external machine port
-  #ports:
-  #   - "27017:27017/tcp"
+  # uncomment to map the mongodb port to the external machine port and access the db directly on host_machine:port
+  ports:
+     - "27017:27017/tcp"
