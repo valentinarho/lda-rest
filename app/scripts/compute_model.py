@@ -9,6 +9,7 @@ from time import time, sleep
 import config
 from model import lda_utils
 from model.lda_model import LdaModelHelper
+import sys
 
 
 class ComputeModelProcess(Process):
@@ -37,7 +38,7 @@ class ComputeModelProcess(Process):
             compute_and_save_model(self.model_identifier, *self.function_args)
         except Exception as e:
             logging.exception("Error during the model computation.")
-            logging.error(e.format_exc())
+            logging.error(sys.last_traceback.format_exc())
             lda_utils.update_model_status(self.model_identifier, LdaModelHelper.status_error, {'process_id': None})
 
 
