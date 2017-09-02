@@ -39,7 +39,7 @@ class ComputeModelProcess(Process):
         except Exception as e:
             logging.exception("Error during the model computation.")
             _, _, tb = sys.exc_info()
-            logging.error(tb.format_exc())
+            logging.error(str(tb))
             lda_utils.update_model_status(self.model_identifier, LdaModelHelper.status_error, {'process_id': None})
 
 

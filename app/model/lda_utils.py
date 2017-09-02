@@ -25,13 +25,14 @@ def read_documents_from_file(data_filename):
     Get documents from a filename. The file should contain json dumped data
     :type data_filename: str
     :param data_filename:
-    :rtype: list
+    :rtype: lists
     :return: list of dictionaries, each dict contains the keys 'doc_id', 'doc_content'
     """
 
     filepath = os.path.join(config.data_path, data_filename)
     with open(filepath) as f:
-        file_content = ' '.join(f.readlines())
+        file_content = ''.join(line.replace('\n', '') for line in f.readlines())
+        file_content = file_content.replace('},]', '}]')
         loaded_data = json.loads(file_content)
 
     return loaded_data
