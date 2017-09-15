@@ -7,14 +7,27 @@ from db import db_utils
 
 class Documents(Resource):
 
-    def get(self, model_id):
+    def get(self, model_id, topic_id=None):
         """
         Get all documents that have a topic assignment in model model_id
 
         :param model_id:
         :return:
         """
-        data = {'documents': db_utils.get_all_documents(model_id)}
+        topic_weight = 0.0
+
+        if topic_id is not None:
+            topic_id = int(topic_id)
+
+            parser = reqparse.RequestParser(bundle_errors=True)
+            parser.add_argument('threshold', default=0.0, required=False,
+                                type=float, help='The minimum probability that the specified topic should '
+                                     'have to consider that document as related.')
+
+            args = parser.parse_args()
+            topic_weight = args['threshold']
+
+        data = {'documents': db_utils.get_all_documents(model_id, topic_id, topic_weight)}
 
         # data = api_utils.filter_only_exposed(data, config.exposed_fields['documents'])
         response = 'Documents retrieved.'

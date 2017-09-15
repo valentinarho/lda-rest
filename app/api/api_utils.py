@@ -79,6 +79,7 @@ document_fields = {
 document_fields_restricted = {
     'document_id': fields.String,
     'model_id': fields.String,
+    'assigned_topics': fields.List(fields.Nested(topic_assignment_fields)),
     'document_details': fields.Url('document', absolute=True),
     'similar_documents': fields.Url('doc_neighbors', absolute=True)
 }
@@ -214,8 +215,8 @@ def get_uri(endpoint_name, api_method='GET', uri_parameters=None, get_parameters
         'document': models_api_endpoint + '/<model_id>' + documents_api_endpoint + '/<document_id>',
         'doc_neighbors': models_api_endpoint + '/<model_id>' + documents_api_endpoint + '/<document_id>' +
                          neighbors_api_endpoint,
-        'text_neighbors': models_api_endpoint + '/<model_id>' + neighbors_api_endpoint
-
+        'text_neighbors': models_api_endpoint + '/<model_id>' + neighbors_api_endpoint,
+        'docs_topic': models_api_endpoint + '/<model_id>' + topics_api_endpoint + '/<topic_id>' + documents_api_endpoint
     }
 
     return base_uri_by_endpoint_name[endpoint_name]

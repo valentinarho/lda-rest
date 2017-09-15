@@ -52,7 +52,6 @@ if __name__ == "__main__":
                      strict_slashes=False)
     api.add_resource(Model, api_utils.get_uri('model'), methods=['GET', 'PATCH', 'DELETE'],
                      strict_slashes=False)
-
     api.add_resource(Topics, api_utils.get_uri('topics'), methods=['GET', 'SEARCH'], strict_slashes=False)
     api.add_resource(Topic, api_utils.get_uri('topic'),
                      methods=['GET', 'PATCH'], strict_slashes=False)
@@ -68,5 +67,9 @@ if __name__ == "__main__":
     api.add_resource(Neighbors, api_utils.get_uri('text_neighbors'),
                      methods=['GET', 'PATCH', 'DELETE'], endpoint="text_neighbors",
                      strict_slashes=False)
+    api.add_resource(Documents, api_utils.get_uri('docs_topic'),
+                     methods=['GET'], endpoint="docs_topic",
+                     strict_slashes=False)
+
 
     app.run(host='0.0.0.0', debug=True)

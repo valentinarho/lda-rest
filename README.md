@@ -44,6 +44,7 @@ Following a table describing the available APIs:
 | models/`<model-id>`/topics/ | GET | Lists all topics related to the model with id `<model-id>`. |  |
 | models/`<model-id>`/topics/ | SEARCH | Computes and returns all topics assigned to the text. | * `text`, str, the text to compute topics for; * `threshold`, float, the min weight of a topic to be retrieved. |
 | models/`<model-id>`/topics/`<topic-id>` | GET | Shows detailed information about topic with id `<topic-id>` in model `<model-id>`| * `threshold`: float, the minimum probability that a topic should have to be returned as associated to the document.| 
+| models/`<model-id>`/topics/`<topic-id>`/documents | GET | Shows all documents associated to the topic with id `<topic-id>` in model `<model-id>`| * `threshold`: float, the minimum probability of the topic that the document should have to be returned as associated to the topic.| 
 | models/`<model-id>`/topics/`<topic-id>` | PATCH | Update optional information of the topic with id `<topic-id>` in model `<model-id>`| * `label`: str, optional, the topic label. * `description`: str, optional, the optional topic description. | 
  
 
