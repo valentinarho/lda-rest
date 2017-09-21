@@ -25,6 +25,10 @@ class LdaModelHelper:
     status_completed = 'completed'
     status_error = 'killed'
 
+    default_use_lemmer = True
+    default_min_df = 2
+    default_max_df = 0.8
+
     def __init__(self, training_number_of_topics_to_extract, language, training_use_lemmer=True, training_min_df=2,
                  training_max_df=0.8, chunksize=2000, passes=2):
         """
@@ -37,12 +41,11 @@ class LdaModelHelper:
         to consider a term in the model
         """
 
-        # TODO implementare diversi linguaggi
         self.language = language
 
-        self.analysis_use_lemmer = None
-        self.analysis_min_df = None
-        self.analysis_max_df = None
+        self.analysis_use_lemmer = LdaModelHelper.default_use_lemmer
+        self.analysis_min_df = LdaModelHelper.default_min_df
+        self.analysis_max_df = LdaModelHelper.default_max_df
 
         self.analysis_corpus = None
         self.analysis_features_names = None

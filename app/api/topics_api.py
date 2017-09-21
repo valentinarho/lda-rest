@@ -107,8 +107,3 @@ class Topic(Resource):
                 return api_utils.prepare_success_response(200, 'Topic updated.', data=marshal(topic, api_utils.topic_fields))
         else:
             return api_utils.prepare_error_response(500, 'Provide the label or the description to set.')
-
-        # TODO controllare che ci sia almeno uno dei due argomenti e implementare il metodo
-
-        return api_utils.prepare_error_response(500, "Not yet implemented.")
-        # return api_utils.prepare_success_response(200, 'tutto ok', {'a': 1})

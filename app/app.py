@@ -56,7 +56,7 @@ if __name__ == "__main__":
     api.add_resource(Topic, api_utils.get_uri('topic'),
                      methods=['GET', 'PATCH'], strict_slashes=False)
 
-    api.add_resource(Documents, api_utils.get_uri('documents'), methods=['GET', 'POST'],
+    api.add_resource(Documents, api_utils.get_uri('documents'), methods=['GET', 'PUT'],
                      strict_slashes=False)
     api.add_resource(Document, api_utils.get_uri('document'),
                      methods=['GET', 'PATCH', 'DELETE'], strict_slashes=False)
@@ -70,6 +70,5 @@ if __name__ == "__main__":
     api.add_resource(Documents, api_utils.get_uri('docs_topic'),
                      methods=['GET'], endpoint="docs_topic",
                      strict_slashes=False)
-
 
     app.run(host='0.0.0.0', debug=True)

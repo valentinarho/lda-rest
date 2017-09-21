@@ -11,6 +11,7 @@
 
 from flask import jsonify
 from flask_restful import fields
+import json
 
 ##
 # Rest marshalling configurations
@@ -220,3 +221,16 @@ def get_uri(endpoint_name, api_method='GET', uri_parameters=None, get_parameters
     }
 
     return base_uri_by_endpoint_name[endpoint_name]
+
+def json_dictionary(json_dictionary_string):
+    """
+    Checks if the string corresponds to a valid json dictionary and returns it.
+
+    :param json_dictionary_string:
+    :return:
+    """
+    try:
+        data = json.loads(json_dictionary_string)
+        return data
+    except:
+        raise ValueError('Data field is not valid. Should be a json encoded string.')

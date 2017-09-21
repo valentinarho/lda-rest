@@ -397,9 +397,61 @@ def assign_topics_for_query(model_id, text, threshold=0.0):
     model = LdaModelHelper(model_info['number_of_topics'], model_info['language'])
     model.load_model_from_file(os.path.join(config.data_path, model_info['files_prefix']))
 
-    try:
-        topic_assignment = model.compute_topic_assignment_for_query(text)
-    except:
-        return [];
+    topic_assignment = model.compute_topic_assignment_for_query(text)
 
     return topic_assignment
+
+
+def assign_topics_for_new_doc(model_id, doc_id, doc_content, save_on_db=True):
+    """
+    Compute topics assignment for a new document and save on db
+    :param model_id:
+    :param doc_id:
+    :param doc_content:
+    :param save_on_db:
+    :return:
+    """
+
+    model_info = db_utils.get_model(model_id)
+    if model_info is None:
+        return None
+
+    # load model from file
+    model = LdaModelHelper(model_info['number_of_topics'], model_info['language'])
+    model.load_model_from_file(os.path.join(config.data_path, model_info['files_prefix']))
+
+    topic_assignment = model.compute_topic_assignment([doc_content])
+    if save_on_db:
+        save_topic_assignment([{'doc_id': doc_id, 'doc_content': doc_content}], topic_assignment, model_id)
+
+    return topic_assignment
+
+
+def assign_topics_for_new_docs(model_id, docs, save_on_db=True):
+    """
+    Compute topics assignment for a list of new documents and save on db
+    :param model_id:
+    :param docs: list of jsons each one in format {'doc_id': 1, 'doc_content': 'c1'}
+    :param save_on_db:
+    :return:
+    """
+    model_info = db_utils.get_model(model_id)
+    if model_info is None:
+        return None
+
+    # load model from file
+    model = LdaModelHelper(model_info['number_of_topics'], model_info['language'])
+    model.load_model_from_file(os.path.join(config.data_path, model_info['files_prefix']))
+
+    doc_contents = []
+    document_ids = []
+
+    for d in docs:
+        doc_contents.append(d['doc_content'])
+        document_ids.append(d['doc_id'])
+
+    topic_assignments = model.compute_topic_assignment(doc_contents)
+    if save_on_db:
+        save_topic_assignment(docs, topic_assignments, model_id)
+
+    return topic_assignments, document_ids

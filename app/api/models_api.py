@@ -11,21 +11,6 @@ import config
 import json
 import logging
 
-
-def json_dictionary(json_dictionary_string):
-    """
-    Checks if the string corresponds to a valid json dictionary and returns it.
-
-    :param json_dictionary_string:
-    :return:
-    """
-    try:
-        data = json.loads(json_dictionary_string)
-        return data
-    except:
-        raise ValueError('Data field is not valid. Should be a json encoded string.')
-
-
 class Models(Resource):
     # parser = reqparse.RequestParser(bundle_errors=True)
     # parser.add_argument('rating', default=2, required=False, type=int, help='blablabla')
@@ -86,7 +71,7 @@ class Models(Resource):
                             help='The filename of the input data. The file should be contained in the /data folder.')
 
         parser.add_argument('data', required=False,
-                            type=json_dictionary, default=None,
+                            type=api_utils.json_dictionary, default=None,
                             help='A dictionary containing documents ids as keys and documents content as values.')
 
         parser.add_argument('data_endpoint', default=None, required=False,

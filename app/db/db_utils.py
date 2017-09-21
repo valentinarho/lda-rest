@@ -141,7 +141,7 @@ def update_topic(model_id, topic_id, topic_label=None, topic_description=None):
         return None
 
 
-def get_all_documents(model_id=None, topic_id=None, topic_weight=0.0):
+def get_all_documents(model_id=None, topic_id=None, topic_weight=0.0, doc_ids=None):
     """
     Get all documents that have an assignment w.r.t the specified model
     :param model_id:
@@ -157,6 +157,9 @@ def get_all_documents(model_id=None, topic_id=None, topic_weight=0.0):
 
         if topic_id is not None:
             query['assigned_topics'] = {'$elemMatch': {'topic_id': topic_id, 'topic_weight': {'$gte': topic_weight}}}
+
+        if doc_ids is not None:
+            query['document_id'] = {'$in': doc_ids}
 
         results = collection.find(query)
         results = [

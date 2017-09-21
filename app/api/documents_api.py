@@ -3,6 +3,7 @@ from flask_restful import Resource, reqparse, marshal
 import config
 from api import api_utils
 from db import db_utils
+from model import lda_utils
 
 
 class Documents(Resource):
@@ -34,6 +35,85 @@ class Documents(Resource):
 
         return api_utils.prepare_success_response(200, response, marshal(data, api_utils.documents_fields)['documents'])
 
+    def put(self, model_id):
+        """
+        Extracts topics from a specified document and save the document in the db
+
+        :param model_id:
+        :return:
+        """
+        parser = reqparse.RequestParser(bundle_errors=True)
+        parser.add_argument('doc_content', required=False, type=str, default=None,
+                            help='The document content.')
+        parser.add_argument('doc_id', required=False, type=str, default=None,
+                            help='The document id.')
+        parser.add_argument('documents', required=False, type=api_utils.json_dictionary, default=None,
+                            help='The documents to assign topics to.')
+        parser.add_argument('save_on_db', required=False, type=bool, default=True,
+                            help='True to save new assignments to db, False otherwise.')
+
+        args = parser.parse_args()
+        save_on_db = args['save_on_db']
+
+        if args['doc_content'] is not None:
+
+            data = {'model_id': model_id, 'document_id': args['doc_id'], 'document_content': args['doc_content']}
+
+            topics_assignment = lda_utils.assign_topics_for_new_doc(model_id, args['doc_id'], args['doc_content'], save_on_db)
+
+            if topics_assignment is None:
+                response = "Error during topic extraction. Check logs."
+                response_code = 500
+            elif len(topics_assignment) == 0:
+                data['assigned_topics'] = []
+                response_code = 200
+                response = "Topics extracted and document saved (attention: topics list is empty!)."
+            else:
+                list_of_da = lda_utils.convert_topic_assignment_to_dictionary(topics_assignment)
+                data['assigned_topics'] = sorted(list_of_da[0]['assigned_topics'], reverse=True,
+                                                 key=lambda d: d['topic_weight'])
+                response_code = 200
+                response = "Topics extracted and document saved."
+
+            marshalled = marshal(data, api_utils.document_fields_restricted)
+        elif args['documents'] is not None:
+            data = {'model_id': model_id}
+            documents = [{'doc_id': key, 'doc_content': args['documents'][key]} for key in args['documents']]
+            topics_assignment, document_ids = lda_utils.assign_topics_for_new_docs(model_id, documents, save_on_db)
+
+            if topics_assignment is None:
+                response = "Error during topic extraction. Check logs."
+                response_code = 500
+            else:
+
+                list_of_da = lda_utils.convert_topic_assignment_to_dictionary(topics_assignment)
+
+                data['documents'] = [
+                    {
+                        'model_id': model_id,
+                        'document_id': document_ids[ta['document_index']],
+                        'doc_content': args['documents'][document_ids[ta['document_index']]],
+                        'assigned_topics': ta['assigned_topics']
+                    }
+                    for ta in list_of_da
+                ]
+
+
+                response_code = 200
+                response = "Topics extracted and documents saved."
+
+            marshalled = marshal(data, api_utils.documents_fields)
+
+        else:
+            response_code = 500
+            marshalled = None
+            response = "Document content is missing."
+
+        if response_code == 200:
+            return api_utils.prepare_success_response(response_code, response, marshalled)
+        else:
+            return api_utils.prepare_error_response(response_code, response, marshalled)
+
 
 class Document(Resource):
 
@@ -64,3 +144,4 @@ class Document(Resource):
         data['model_id'] = model_id
 
         return api_utils.prepare_success_response(200, 'Document retrieved.', marshal(data, api_utils.document_fields))
+
