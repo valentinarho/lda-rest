@@ -23,7 +23,7 @@ class Topics(Resource):
 
         args = parser.parse_args()
 
-        if args['text'].strip() is not None:
+        if args['text'] is not None:
             data = {'model_id': model_id, 'threshold': args['threshold'], 'textual_query': args['text']}
 
             topics_assignment = lda_utils.assign_topics_for_query(model_id, args['text'], args['threshold'])
